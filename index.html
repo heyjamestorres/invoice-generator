@@ -1,108 +1,115 @@
-<!DOCTYPE html>
-<html lang="en">
+<!doctype html>
+<html>
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>JT Invoice Maker</title>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>JT Invoice Lite</title>
 <style>
-*{box-sizing:border-box}body{margin:0;font-family:Arial,sans-serif;background:#f3f4f6;color:#111827;padding:18px}.app{max-width:1120px;margin:auto;display:grid;grid-template-columns:440px 1fr;gap:18px}.panel,.preview-wrap{background:#fff;border-radius:22px;box-shadow:0 10px 30px #0001;padding:20px}h1{margin:0 0 8px;font-size:26px}.subtitle,.small,.status{color:#6b7280;font-size:12px;line-height:1.45}label{display:block;font-weight:700;margin:13px 0 6px;font-size:13px}input,textarea,select{width:100%;border:1px solid #d1d5db;border-radius:13px;padding:12px;font-size:15px}textarea{min-height:72px;resize:vertical}.two{display:grid;grid-template-columns:1fr 1fr;gap:10px}.three{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}.section-title{margin-top:18px;padding-top:14px;border-top:1px solid #e5e7eb;font-size:14px;font-weight:900}.btns{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:16px}.btns3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-top:10px}button{border:0;border-radius:14px;padding:12px;font-weight:800;cursor:pointer;font-size:13px}.primary{background:#111827;color:white}.secondary{background:#e5e7eb}.success{background:#dcfce7;color:#166534}.warn{background:#fef3c7;color:#92400e}.danger{background:#fee2e2;color:#991b1b}.full{width:100%;margin-top:12px}.invoice{width:794px;min-height:1123px;margin:auto;background:white;padding:44px;color:#222;position:relative}.top{display:flex;justify-content:space-between}.meta{font-size:15px;line-height:1.5}.logo{width:80px;height:80px;object-fit:contain}.title{font-size:56px;font-weight:900;margin:16px 0 10px;letter-spacing:-.04em}.rule,.total-rule{border:0;border-top:1.3px solid #777}.bill-title{font-size:27px;margin:24px 0}.bill{font-size:19px;line-height:1.18;margin-bottom:76px;white-space:pre-line}.items{width:100%;border-collapse:collapse}.items th{text-align:left;font-size:23px;font-weight:500;padding-bottom:10px;border-bottom:1.5px solid #333}.items th.qty,.items th.amount,.items td.qty,.items td.amount{text-align:right;width:160px}.items td{padding:34px 6px 16px;vertical-align:top;font-size:19px;line-height:1.25}.spacer{min-height:185px}.total-grid{display:grid;grid-template-columns:1fr 180px;margin-top:28px}.total-label{text-align:right;font-size:23px;margin-bottom:28px}.total-amount{text-align:right;font-size:28px;font-weight:900}.payment{position:absolute;left:44px;right:44px;bottom:64px;display:grid;grid-template-columns:1fr 1fr;gap:20px;align-items:end;border-bottom:1.2px solid #777;padding-bottom:20px}.payment h3{margin:0 0 28px;font-size:15px}.payment div{font-size:15px;line-height:1.4;white-space:pre-line}.gst{text-align:right;color:#555;font-size:12px}@media(max-width:980px){.app{display:block}.preview-wrap{margin-top:18px;overflow-x:auto}}@media print{body{background:white;padding:0}.panel{display:none}.app{display:block;max-width:none}.preview-wrap{box-shadow:none;border-radius:0;padding:0}.invoice{width:210mm;min-height:297mm;padding:12mm;margin:0}}
+*{box-sizing:border-box}body{margin:0;background:#f5f5f5;font-family:Arial,sans-serif;color:#111;padding:14px}
+.wrap{max-width:980px;margin:auto;display:grid;grid-template-columns:360px 1fr;gap:14px}
+.card{background:#fff;border-radius:18px;padding:16px;box-shadow:0 8px 24px #0001}
+h1{font-size:22px;margin:0 0 4px}.hint{font-size:12px;color:#666;line-height:1.4;margin:0 0 10px}
+label{display:block;font-size:12px;font-weight:700;margin:10px 0 5px}
+input,textarea,select{width:100%;padding:11px;border:1px solid #ddd;border-radius:10px;font-size:14px;background:white}
+textarea{min-height:62px}.grid2{display:grid;grid-template-columns:1fr 1fr;gap:8px}.grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px}
+.sec{border-top:1px solid #eee;margin-top:14px;padding-top:12px;font-weight:800;font-size:13px}
+button{border:0;border-radius:11px;padding:11px;font-weight:800;font-size:12px;cursor:pointer}
+.btns{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px}.btns3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:7px;margin-top:8px}
+.dark{background:#111;color:white}.light{background:#e5e5e5}.green{background:#dcfce7;color:#166534}.yellow{background:#fef3c7;color:#92400e}.red{background:#fee2e2;color:#991b1b}
+#msg{margin-top:10px;background:#f4f4f5;border-radius:10px;padding:10px;font-size:12px;color:#555;white-space:pre-wrap;line-height:1.4}
+.preview{overflow:auto}.invoice{width:794px;min-height:1123px;background:#fff;margin:auto;padding:44px;position:relative}
+.top{display:flex;justify-content:space-between}.meta{font-size:15px;line-height:1.5}.logo{width:78px;height:78px;object-fit:contain}
+.title{font-size:56px;font-weight:900;margin:16px 0 8px}.line{border:0;border-top:1.3px solid #777}
+.billtitle{font-size:27px;margin:24px 0}.bill{font-size:19px;line-height:1.2;white-space:pre-line;margin-bottom:70px}
+table{width:100%;border-collapse:collapse}.items th{text-align:left;font-size:23px;font-weight:500;border-bottom:1.5px solid #333;padding-bottom:10px}
+.items th:nth-child(2),.items th:nth-child(3),.items td:nth-child(2),.items td:nth-child(3){text-align:right;width:160px}
+.items td{font-size:19px;line-height:1.25;padding:34px 6px 16px;vertical-align:top}
+.spacer{min-height:185px}.totallabel{text-align:right;font-size:23px;margin-top:25px}.total{font-size:28px;font-weight:900;text-align:right;margin-top:24px}
+.pay{position:absolute;left:44px;right:44px;bottom:64px;display:grid;grid-template-columns:1fr 1fr;gap:20px;border-bottom:1.2px solid #777;padding-bottom:20px;align-items:end}
+.pay h3{font-size:15px;margin:0 0 28px}.pay div{font-size:15px;line-height:1.4;white-space:pre-line}.gst{text-align:right;font-size:12px;color:#555}
+@media(max-width:900px){.wrap{display:block}.preview{margin-top:14px}}
+@media print{body{background:white;padding:0}.card:first-child{display:none}.wrap{display:block}.preview{box-shadow:none;border-radius:0;padding:0}.invoice{width:210mm;min-height:297mm;padding:12mm}}
 </style>
 </head>
 <body>
-<div class="app">
-<section class="panel">
-<h1>JT Invoice Maker</h1>
-<p class="subtitle">Temporary invoice tool. Google Sheets is master for invoice numbers, invoice status, and client backup. Bank details save locally only.</p>
+<div class="wrap">
+<div class="card">
+<h1>JT Invoice Lite</h1>
+<p class="hint">Minimal version. Test connection first. Sheet stores clients, invoices, status, and invoice numbers.</p>
 
-<div class="section-title">Invoice</div>
-<div class="two"><div><label>Date</label><input id="invoiceDate" type="date"></div><div><label>Invoice No.</label><input id="invoiceNo" value="JT-002"></div></div>
-<label>Status</label><select id="statusSelect"><option>Draft</option><option>Sent</option><option>Paid</option><option>Archived</option><option>Cancelled</option><option>Replaced</option></select>
+<div class="sec">Setup</div>
+<label>Apps Script Web App URL</label><input id="url">
+<label>Secret Key</label><input id="key" value="JT-PRIVATE-INVOICE-2026">
+<div class="btns"><button class="light" onclick="saveSettings()">Save Settings</button><button class="dark" onclick="test()">Test</button></div>
 
-<div class="section-title">Client</div>
-<label>Saved Client</label><select id="clientSelect"><option value="">Select saved client</option></select>
-<div class="btns"><button class="secondary" onclick="getClients()">Get Clients</button><button class="primary" onclick="saveOrUpdateClient()">Update/Save Client</button></div>
-<label>Client Name</label><input id="clientName" placeholder="Client full name">
-<label>NDIS Number</label><input id="ndisNo" placeholder="NDIS number">
-<label>Client Address</label><textarea id="clientAddress" placeholder="Street&#10;Suburb VIC postcode&#10;Australia"></textarea>
+<div class="sec">Invoice</div>
+<div class="grid2"><div><label>Date</label><input id="date" type="date"></div><div><label>Invoice No</label><input id="invoiceNo" value="JT-002"></div></div>
+<div class="btns"><button class="light" onclick="nextNo()">Next No</button><button class="light" onclick="retrieve()">Retrieve</button></div>
 
-<div class="section-title">Service</div>
-<label>Description</label><textarea id="description">Individual Support Services,
+<div class="sec">Client</div>
+<label>Saved Client</label><select id="clientList"><option value="">Select client</option></select>
+<div class="btns"><button class="light" onclick="clients()">Load Clients</button><button class="dark" onclick="saveClient()">Save/Update</button></div>
+<label>Name</label><input id="client">
+<label>NDIS No</label><input id="ndis">
+<label>Address</label><textarea id="address"></textarea>
+
+<div class="sec">Service</div>
+<label>Description</label><textarea id="desc">Individual Support Services,
 Weekday Afternoon Shift</textarea>
-<div class="two"><div><label>Start Time</label><input id="startTime" placeholder="3:00pm"></div><div><label>End Time</label><input id="endTime" placeholder="7:45pm"></div></div>
-<div class="three"><div><label>Hours</label><input id="hours" type="number" step="0.01" value="4.75"></div><div><label>Shift Type</label><select id="shiftType"><option value="42">Weekday $42</option><option value="50">Evening $50</option><option value="65">Saturday $65</option><option value="80">Sunday $80</option><option value="100">Public Holiday $100</option></select></div><div><label>Rate</label><input id="rate" type="number" step="0.01" value="42"></div></div>
+<div class="grid2"><div><label>Start</label><input id="start" placeholder="3:00pm"></div><div><label>End</label><input id="end" placeholder="7:45pm"></div></div>
+<div class="grid3"><div><label>Hours</label><input id="hours" type="number" step="0.01" value="4.75"></div><div><label>Rate</label><input id="rate" type="number" step="0.01" value="42"></div><div><label>KM</label><input id="km" type="number" step="0.1" value="0"></div></div>
+<div class="grid2"><div><label>KM Rate</label><input id="kmRate" type="number" step="0.01" value="1"></div><div><label>KM</label><select id="kmMode"><option value="none">No KM</option><option value="separate">Separate</option><option value="bundled">Bundled</option></select></div></div>
 
-<div class="section-title">KM</div>
-<label>KM Handling</label><select id="kmHandling"><option value="none">No KM</option><option value="separate">Separate KM line</option><option value="bundled">Bundle KM into hours</option></select>
-<div class="two"><div><label>KM</label><input id="km" type="number" step="0.1" value="0"></div><div><label>KM Rate</label><input id="kmRate" type="number" step="0.01" value="1"></div></div>
-<p class="small">Bundled: support value + km value, divided by hourly rate, then shown as hours only.</p>
+<div class="sec">Bank, local only</div>
+<label>Account Name</label><input id="accName" placeholder="Jason Torres Maghacot">
+<label>Bank</label><input id="bank" placeholder="Commonwealth Bank">
+<div class="grid2"><div><label>BSB</label><input id="bsb"></div><div><label>Account No</label><input id="accNo"></div></div>
 
-<div class="section-title">Local Payment Info</div>
-<label>Account Name</label><input id="accountName" placeholder="Jason Torres Maghacot">
-<label>Bank Name</label><input id="bankName" placeholder="Commonwealth Bank">
-<div class="two"><div><label>BSB</label><input id="bsb" placeholder="063733"></div><div><label>Account Number</label><input id="accountNumber" placeholder="10674352"></div></div>
-<button class="secondary full" onclick="saveLocalSettings()">Save bank/settings on this device</button>
-
-<div class="section-title">Google Sheets Backup</div>
-<label>Apps Script Web App URL</label><input id="scriptUrl" placeholder="Paste Apps Script Web App URL">
-<label>Secret Key</label><input id="secretKey" placeholder="JT-PRIVATE-INVOICE-2026">
-
-<div class="btns">
-<button class="secondary" onclick="getNextInvoice()">Get Next No.</button>
-<button class="secondary" onclick="retrieveInvoice()">Retrieve Invoice</button>
+<div class="btns3">
+<button class="dark" onclick="saveInv('Draft')">Draft</button><button class="yellow" onclick="saveInv('Sent')">Sent</button><button class="green" onclick="saveInv('Paid')">Paid</button>
 </div>
 <div class="btns3">
-<button class="primary" onclick="saveInvoiceWithStatus('Draft')">Save Draft</button>
-<button class="warn" onclick="saveInvoiceWithStatus('Sent')">Mark as Sent</button>
-<button class="success" onclick="saveInvoiceWithStatus('Paid')">Mark as Paid</button>
+<button class="light" onclick="saveInv('Archived')">Archive</button><button class="red" onclick="saveInv('Cancelled')">Cancel</button><button class="light" onclick="window.print()">PDF</button>
 </div>
-<div class="btns3">
-<button class="secondary" onclick="saveInvoiceWithStatus('Archived')">Archive Invoice</button>
-<button class="danger" onclick="saveInvoiceWithStatus('Cancelled')">Cancel Invoice</button>
-<button class="secondary" onclick="window.print()">Print / PDF</button>
+<div id="msg">Ready.</div>
 </div>
 
-<div id="appStatus" class="status">Ready.</div>
-</section>
-
-<section class="preview-wrap">
+<div class="card preview">
 <div class="invoice">
-<div class="top"><div class="meta"><div id="pDate"></div><div><strong>Invoice No. <span id="pInvoiceNo">JT-002</span></strong></div><div><strong>ABN: 54 852 785 661</strong></div></div><img class="logo" src="jt-logo.jpeg" alt="JT logo"></div>
-<div class="title">Invoice</div><hr class="rule">
-<div class="bill-title">Bill To:</div><div class="bill" id="pBillTo"></div>
-<table class="items"><thead><tr><th>DESCRIPTION</th><th class="qty">QTY</th><th class="amount">AMOUNT</th></tr></thead><tbody id="pItems"></tbody></table>
-<div class="spacer"></div>
-<div class="total-grid"><div class="total-label">TOTAL</div><div></div></div><hr class="total-rule"><div class="total-grid"><div></div><div class="total-amount" id="pTotal">$0.00</div></div>
-<div class="payment"><div><h3>Payment Information</h3><div id="pPayment"></div></div><div class="gst">No GST has been charged</div></div>
+<div class="top"><div class="meta"><div id="pDate"></div><div><b>Invoice No. <span id="pNo"></span></b></div><div><b>ABN: 54 852 785 661</b></div></div><img class="logo" src="jt-logo.jpeg"></div>
+<div class="title">Invoice</div><hr class="line">
+<div class="billtitle">Bill To:</div><div id="pBill" class="bill"></div>
+<table class="items"><thead><tr><th>DESCRIPTION</th><th>QTY</th><th>AMOUNT</th></tr></thead><tbody id="pRows"></tbody></table>
+<div class="spacer"></div><div class="totallabel">TOTAL</div><hr class="line"><div id="pTotal" class="total">$0.00</div>
+<div class="pay"><div><h3>Payment Information</h3><div id="pPay"></div></div><div class="gst">No GST has been charged</div></div>
 </div>
-</section>
+</div>
 </div>
 
 <script>
-const DEFAULT_SECRET="JT-PRIVATE-INVOICE-2026";
 let CLIENTS=[];
 function $(id){return document.getElementById(id)}
-function setStatus(m){$("appStatus").innerText=m}
+function msg(t){$("msg").textContent=t}
+function esc(s){return String(s||"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#039;"}[m]))}
 function money(n){return "$"+Number(n||0).toFixed(2)}
-function esc(t){return String(t||"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;").replace(/'/g,"&#039;")}
-function formatDate(s){if(!s)return"";return new Date(s+"T00:00:00").toLocaleDateString("en-AU",{day:"numeric",month:"long",year:"numeric"})}
-function setToday(){let d=new Date();$("invoiceDate").value=d.toISOString().slice(0,10)}
-function saveLocalSettings(){["accountName","bankName","bsb","accountNumber","scriptUrl","secretKey"].forEach(k=>localStorage.setItem("jt_invoice_"+k,$(k).value.trim()));setStatus("Saved on this device only.")}
-function loadLocalSettings(){["accountName","bankName","bsb","accountNumber","scriptUrl","secretKey"].forEach(k=>{let v=localStorage.getItem("jt_invoice_"+k);if(v)$(k).value=v});if(!$("secretKey").value)$("secretKey").value=DEFAULT_SECRET}
-function calc(){let h=+$("hours").value||0,r=+$("rate").value||0,km=+$("km").value||0,kr=+$("kmRate").value||0,mode=$("kmHandling").value;let support=h*r,kmAmt=km*kr,total=support,billed=h;if(mode==="separate")total=support+kmAmt;if(mode==="bundled"){total=support+kmAmt;billed=r>0?total/r:h}return{h,r,km,kr,mode,support,kmAmt,total,billed}}
-function addRow(desc,qty,amt){let tr=document.createElement("tr");tr.innerHTML=`<td>${esc(desc).replace(/\n/g,"<br>")}</td><td class="qty">${esc(qty)}</td><td class="amount">${money(amt)}</td>`;$("pItems").appendChild(tr)}
-function render(){let c=calc();$("pDate").innerText=formatDate($("invoiceDate").value);$("pInvoiceNo").innerText=$("invoiceNo").value||"JT-002";$("pBillTo").innerHTML="<strong>"+esc($("clientName").value||"Client Name")+"</strong>\nNDIS No. "+esc($("ndisNo").value||"000000000")+"\n\n"+esc($("clientAddress").value||"Client Address\nAustralia");let d=$("description").value||"Individual Support Services";if($("startTime").value||$("endTime").value)d+="\n"+$("startTime").value+"–"+$("endTime").value;$("pItems").innerHTML="";if(c.mode==="bundled"){addRow(d,c.billed.toFixed(2)+" hours",c.total)}else{addRow(d,c.h.toFixed(2)+" hours",c.support);if(c.mode==="separate"&&c.km>0)addRow("Participant Transport",String(c.km).replace(/\.0$/,"")+" km",c.kmAmt)}$("pTotal").innerText=money(c.total);$("pPayment").innerText=($("accountName").value||"Jason Torres Maghacot")+"\n"+($("bankName").value||"Commonwealth Bank")+"\nBSB "+($("bsb").value||"")+"\nAccount Number "+($("accountNumber").value||"")}
-function buildData(statusOverride){let c=calc();return{date:$("invoiceDate").value,invoiceNo:$("invoiceNo").value,client:$("clientName").value,ndisNo:$("ndisNo").value,address:$("clientAddress").value,description:$("description").value+(($("startTime").value||$("endTime").value)?"\n"+$("startTime").value+"–"+$("endTime").value:""),actualHours:c.h,billedHours:c.mode==="bundled"?c.billed.toFixed(2):c.h.toFixed(2),rate:c.r,km:c.km,kmRate:c.kr,kmHandling:c.mode,amount:c.total.toFixed(2),gst:"No GST has been charged",notes:c.mode==="bundled"?"KM bundled into hours":"",status:statusOverride||$("statusSelect").value}}
-function jsonp(url){let s=document.createElement("script");s.src=url;s.onerror=()=>setStatus("Google Sheets request failed. Check URL/deployment.");document.body.appendChild(s);setTimeout(()=>s.remove(),15000)}
-function buildUrl(params){let base=$("scriptUrl").value.trim();if(!base)throw Error("Paste Apps Script Web App URL first.");let u=new URL(base);u.searchParams.set("secret",$("secretKey").value.trim()||DEFAULT_SECRET);Object.entries(params).forEach(([k,v])=>u.searchParams.set(k,v==null?"":String(v)));return u.toString()}
-function request(action,params,handler){try{saveLocalSettings();let cb="jt_"+action+"_"+Date.now();window[cb]=res=>{handler(res);delete window[cb]};jsonp(buildUrl({...params,action,callback:cb}))}catch(e){setStatus(e.message)}}
-function getNextInvoice(){request("nextInvoice",{},res=>{if(res&&res.ok){$("invoiceNo").value=res.nextInvoice;render();setStatus("Next invoice: "+res.nextInvoice)}else setStatus("Could not get next invoice: "+(res&&res.error||"Unknown"))});setStatus("Getting next invoice number...")}
-function saveInvoiceWithStatus(st){$("statusSelect").value=st;let data=buildData(st);request("saveInvoice",data,res=>{if(res&&res.ok){setStatus(st+" saved: "+res.invoiceNo+". Next: "+res.nextInvoice);$("invoiceNo").value=res.nextInvoice;render()}else setStatus("Save failed: "+(res&&res.error||"Unknown"))});setStatus("Saving "+st+"...")}
-function retrieveInvoice(){let no=$("invoiceNo").value.trim();if(!no){setStatus("Enter invoice number first.");return}request("getInvoice",{invoiceNo:no},res=>{if(res&&res.ok&&res.invoice){loadInvoice(res.invoice);setStatus("Retrieved "+no)}else setStatus("Invoice not found: "+no)})}
-function loadInvoice(inv){$("invoiceDate").value=inv.date||$("invoiceDate").value;$("invoiceNo").value=inv.invoiceNo||"";$("clientName").value=inv.client||"";$("ndisNo").value=inv.ndisNo||"";$("clientAddress").value=inv.address||"";$("description").value=(inv.description||"").split("\n").slice(0,-1).join("\n")||inv.description||"";$("hours").value=inv.actualHours||"";$("rate").value=inv.rate||"";$("km").value=inv.km||0;$("kmRate").value=inv.kmRate||1;$("kmHandling").value=inv.kmHandling||"none";$("statusSelect").value=inv.status||"Draft";render()}
-function getClients(){request("getClients",{},res=>{if(res&&res.ok){CLIENTS=res.clients||[];let sel=$("clientSelect");sel.innerHTML='<option value="">Select saved client</option>';CLIENTS.forEach((c,i)=>{let o=document.createElement("option");o.value=i;o.textContent=c.client+" | "+(c.ndisNo||"No NDIS");sel.appendChild(o)});setStatus("Loaded "+CLIENTS.length+" clients.")}else setStatus("Could not load clients.")})}
-function saveOrUpdateClient(){request("saveClient",{client:$("clientName").value,ndisNo:$("ndisNo").value,address:$("clientAddress").value},res=>{if(res&&res.ok){setStatus("Client saved/updated.");getClients()}else setStatus("Client save failed: "+(res&&res.error||"Unknown"))})}
-$("clientSelect").addEventListener("change",()=>{let c=CLIENTS[+$("clientSelect").value];if(c){$("clientName").value=c.client||"";$("ndisNo").value=c.ndisNo||"";$("clientAddress").value=c.address||"";render()}});
-document.addEventListener("input",render);document.addEventListener("change",render);$("shiftType").addEventListener("change",()=>{$("rate").value=$("shiftType").value;render()});setToday();loadLocalSettings();render();if($("scriptUrl").value.trim()){getNextInvoice();getClients();}
+function dtext(s){return s?new Date(s+"T00:00:00").toLocaleDateString("en-AU",{day:"numeric",month:"long",year:"numeric"}):""}
+function today(){let d=new Date();$("date").value=d.toISOString().slice(0,10)}
+function saveSettings(){["url","key","accName","bank","bsb","accNo"].forEach(k=>localStorage.setItem("jt_"+k,$(k).value.trim()));msg("Settings saved on this device.")}
+function loadSettings(){["url","key","accName","bank","bsb","accNo"].forEach(k=>{let v=localStorage.getItem("jt_"+k);if(v)$(k).value=v})}
+function calc(){let h=+$("hours").value||0,r=+$("rate").value||0,km=+$("km").value||0,kr=+$("kmRate").value||0,mode=$("kmMode").value;let sup=h*r,kma=km*kr,total=sup,billed=h;if(mode==="separate")total+=kma;if(mode==="bundled"){total+=kma;billed=r?total/r:h}return{h,r,km,kr,mode,sup,kma,total,billed}}
+function render(){let c=calc();$("pDate").textContent=dtext($("date").value);$("pNo").textContent=$("invoiceNo").value;$("pBill").innerHTML="<b>"+esc($("client").value||"Client Name")+"</b>\nNDIS No. "+esc($("ndis").value||"000000000")+"\n\n"+esc($("address").value||"Address\nAustralia");let desc=$("desc").value;if($("start").value||$("end").value)desc+="\n"+$("start").value+"–"+$("end").value;$("pRows").innerHTML="";if(c.mode==="bundled"){row(desc,c.billed.toFixed(2)+" hours",c.total)}else{row(desc,c.h.toFixed(2)+" hours",c.sup);if(c.mode==="separate"&&c.km>0)row("Participant Transport",c.km+" km",c.kma)}$("pTotal").textContent=money(c.total);$("pPay").textContent=($("accName").value||"Jason Torres Maghacot")+"\n"+($("bank").value||"Commonwealth Bank")+"\nBSB "+($("bsb").value||"")+"\nAccount Number "+($("accNo").value||"")}
+function row(d,q,a){let tr=document.createElement("tr");tr.innerHTML="<td>"+esc(d).replace(/\n/g,"<br>")+"</td><td>"+esc(q)+"</td><td>"+money(a)+"</td>";$("pRows").appendChild(tr)}
+function baseUrl(params){let base=$("url").value.trim();if(!base)throw Error("Missing Apps Script URL");let u=new URL(base);u.searchParams.set("secret",$("key").value.trim());Object.entries(params).forEach(([k,v])=>u.searchParams.set(k,v==null?"":String(v)));return u.toString()}
+function call(action,params,done){try{saveSettings();let cb="cb"+Date.now()+Math.floor(Math.random()*9999);window[cb]=r=>{done(r);delete window[cb]};let s=document.createElement("script");s.src=baseUrl({...params,action,callback:cb});s.onerror=()=>msg("Request failed. Check deployment access = Anyone, new version deployed, URL, and key.");document.body.appendChild(s);setTimeout(()=>s.remove(),15000)}catch(e){msg(e.message)}}
+function test(){msg("Testing...");call("test",{},r=>msg(r&&r.ok?"Connected to sheet: "+r.sheet:"Failed: "+(r&&r.error||"Unknown")))}
+function nextNo(){msg("Getting next invoice...");call("nextInvoice",{},r=>{if(r&&r.ok){$("invoiceNo").value=r.nextInvoice;render();msg("Next invoice: "+r.nextInvoice)}else msg("Failed: "+(r&&r.error||"Unknown"))})}
+function clients(){msg("Loading clients...");call("getClients",{},r=>{if(r&&r.ok){CLIENTS=r.clients||[];$("clientList").innerHTML='<option value="">Select client</option>';CLIENTS.forEach((c,i)=>{let o=document.createElement("option");o.value=i;o.textContent=c.client+" | "+(c.ndisNo||"No NDIS");$("clientList").appendChild(o)});msg("Loaded "+CLIENTS.length+" clients.")}else msg("Could not load clients: "+(r&&r.error||"Unknown"))})}
+function saveClient(){msg("Saving client...");call("saveClient",{client:$("client").value,ndisNo:$("ndis").value,address:$("address").value},r=>{if(r&&r.ok){msg("Client saved.");clients()}else msg("Client failed: "+(r&&r.error||"Unknown"))})}
+function data(status){let c=calc();return{date:$("date").value,invoiceNo:$("invoiceNo").value,client:$("client").value,ndisNo:$("ndis").value,address:$("address").value,description:$("desc").value+(($("start").value||$("end").value)?"\n"+$("start").value+"–"+$("end").value:""),actualHours:c.h,billedHours:c.mode==="bundled"?c.billed.toFixed(2):c.h.toFixed(2),rate:c.r,km:c.km,kmRate:c.kr,kmHandling:c.mode,amount:c.total.toFixed(2),status,notes:c.mode==="bundled"?"KM bundled into hours":""}}
+function saveInv(status){msg("Saving "+status+"...");call("saveInvoice",data(status),r=>{if(r&&r.ok){msg(status+" saved: "+r.invoiceNo+"\nNext: "+r.nextInvoice);$("invoiceNo").value=r.nextInvoice;render()}else msg("Save failed: "+(r&&r.error||"Unknown"))})}
+function retrieve(){let no=$("invoiceNo").value.trim();if(!no)return msg("Enter invoice number.");msg("Retrieving...");call("getInvoice",{invoiceNo:no},r=>{if(r&&r.ok&&r.invoice){let x=r.invoice;$("date").value=x.date||$("date").value;$("invoiceNo").value=x.invoiceNo||"";$("client").value=x.client||"";$("ndis").value=x.ndisNo||"";$("address").value=x.address||"";$("desc").value=x.description||"";$("hours").value=x.actualHours||"";$("rate").value=x.rate||"";$("km").value=x.km||0;$("kmRate").value=x.kmRate||1;$("kmMode").value=x.kmHandling||"none";render();msg("Retrieved "+no)}else msg("Not found or failed: "+(r&&r.error||no))})}
+$("clientList").addEventListener("change",()=>{let c=CLIENTS[+$("clientList").value];if(c){$("client").value=c.client||"";$("ndis").value=c.ndisNo||"";$("address").value=c.address||"";render()}});
+document.addEventListener("input",render);document.addEventListener("change",render);today();loadSettings();render();
 </script>
 </body>
 </html>
