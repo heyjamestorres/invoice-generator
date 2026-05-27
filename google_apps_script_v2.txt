@@ -1,0 +1,158 @@
+// JT Invoice Maker Google Sheets Backend v2
+// Tabs created/used: Invoices, Clients
+// Deploy as Web App: Execute as Me, Access Anyone.
+
+const SECRET_KEY = 'JT-PRIVATE-INVOICE-2026';
+const INVOICES = 'Invoices';
+const CLIENTS = 'Clients';
+
+const INVOICE_HEADERS = ['Date','Invoice No','Client','NDIS No','Address','Description','Actual Hours','Billed Hours','Rate','KM','KM Rate','KM Handling','Amount','GST','Notes','Status','Saved At','Updated At'];
+const CLIENT_HEADERS = ['Client ID','Client','NDIS No','Address','Status','Notes','Saved At','Updated At'];
+
+function doGet(e) {
+  const p = e.parameter || {};
+  const cb = p.callback || 'callback';
+  try {
+    if (p.secret !== SECRET_KEY) return jsonp(cb, {ok:false, error:'Invalid secret key'});
+    const invSheet = getSheet_(INVOICES, INVOICE_HEADERS);
+    const clientSheet = getSheet_(CLIENTS, CLIENT_HEADERS);
+
+    if (p.action === 'nextInvoice') return jsonp(cb, {ok:true, nextInvoice:getNextInvoiceNo_(invSheet)});
+
+    if (p.action === 'saveInvoice') {
+      const invoiceNo = p.invoiceNo || getNextInvoiceNo_(invSheet);
+      upsertInvoice_(invSheet, p, invoiceNo);
+      if (p.client) upsertClient_(clientSheet, p.client, p.ndisNo, p.address);
+      return jsonp(cb, {ok:true, invoiceNo, nextInvoice:getNextInvoiceNo_(invSheet)});
+    }
+
+    if (p.action === 'getInvoice') {
+      const invoice = findInvoice_(invSheet, p.invoiceNo);
+      return jsonp(cb, {ok:!!invoice, invoice});
+    }
+
+    if (p.action === 'getClients') return jsonp(cb, {ok:true, clients:getClients_(clientSheet)});
+
+    if (p.action === 'saveClient') {
+      upsertClient_(clientSheet, p.client, p.ndisNo, p.address);
+      return jsonp(cb, {ok:true});
+    }
+
+    return jsonp(cb, {ok:false, error:'Unknown action'});
+  } catch (err) {
+    return jsonp(cb, {ok:false, error:String(err)});
+  }
+}
+
+function getSheet_(name, headers) {
+  const ss = SpreadsheetApp.getActiveSpreadsheet();
+  let sh = ss.getSheetByName(name);
+  if (!sh) sh = ss.insertSheet(name);
+  if (sh.getLastRow() === 0 || sh.getRange(1,1).getValue() === '') {
+    sh.getRange(1,1,1,headers.length).setValues([headers]);
+    sh.setFrozenRows(1);
+  }
+  return sh;
+}
+
+function getNextInvoiceNo_(sh) {
+  let maxNumber = 1; // JT-001 already exists, so next minimum is JT-002
+  const lastRow = sh.getLastRow();
+  if (lastRow >= 2) {
+    sh.getRange(2,2,lastRow-1,1).getValues().flat().forEach(v => {
+      const m = String(v||'').match(/^JT-(\d+)$/i);
+      if (m) maxNumber = Math.max(maxNumber, parseInt(m[1],10));
+    });
+  }
+  return 'JT-' + String(maxNumber + 1).padStart(3,'0');
+}
+
+function findInvoiceRow_(sh, invoiceNo) {
+  const lastRow = sh.getLastRow();
+  if (lastRow < 2) return -1;
+  const vals = sh.getRange(2,2,lastRow-1,1).getValues().flat();
+  for (let i=0; i<vals.length; i++) {
+    if (String(vals[i]).trim().toUpperCase() === String(invoiceNo).trim().toUpperCase()) return i + 2;
+  }
+  return -1;
+}
+
+function upsertInvoice_(sh, p, invoiceNo) {
+  const now = new Date();
+  const row = [
+    p.date||'', invoiceNo, p.client||'', p.ndisNo||'', p.address||'', p.description||'',
+    p.actualHours||'', p.billedHours||'', p.rate||'', p.km||'', p.kmRate||'', p.kmHandling||'',
+    p.amount||'', p.gst||'No GST has been charged', p.notes||'', p.status||'Draft', now, now
+  ];
+  const existing = findInvoiceRow_(sh, invoiceNo);
+  if (existing > 0) {
+    const oldSavedAt = sh.getRange(existing,17).getValue() || now;
+    row[16] = oldSavedAt;
+    sh.getRange(existing,1,1,INVOICE_HEADERS.length).setValues([row]);
+  } else {
+    sh.appendRow(row);
+  }
+}
+
+function findInvoice_(sh, invoiceNo) {
+  const row = findInvoiceRow_(sh, invoiceNo);
+  if (row < 0) return null;
+  const v = sh.getRange(row,1,1,INVOICE_HEADERS.length).getValues()[0];
+  return {
+    date: formatDateForInput_(v[0]), invoiceNo:v[1], client:v[2], ndisNo:v[3], address:v[4], description:v[5],
+    actualHours:v[6], billedHours:v[7], rate:v[8], km:v[9], kmRate:v[10], kmHandling:v[11],
+    amount:v[12], gst:v[13], notes:v[14], status:v[15]
+  };
+}
+
+function upsertClient_(sh, client, ndisNo, address) {
+  client = String(client||'').trim();
+  ndisNo = String(ndisNo||'').trim();
+  address = String(address||'').trim();
+  if (!client) throw new Error('Client name is required');
+
+  const lastRow = sh.getLastRow();
+  let found = -1;
+  if (lastRow >= 2) {
+    const vals = sh.getRange(2,1,lastRow-1,4).getValues();
+    for (let i=0; i<vals.length; i++) {
+      const existingName = String(vals[i][1]||'').trim().toLowerCase();
+      const existingNdis = String(vals[i][2]||'').trim();
+      if ((ndisNo && existingNdis === ndisNo) || (!ndisNo && existingName === client.toLowerCase())) {
+        found = i + 2;
+        break;
+      }
+    }
+  }
+
+  const now = new Date();
+  if (found > 0) {
+    const oldId = sh.getRange(found,1).getValue();
+    const oldSaved = sh.getRange(found,7).getValue() || now;
+    sh.getRange(found,1,1,CLIENT_HEADERS.length).setValues([[oldId, client, ndisNo, address, 'Active', '', oldSaved, now]]);
+  } else {
+    const id = 'C' + String(Math.max(1,lastRow)).padStart(3,'0');
+    sh.appendRow([id, client, ndisNo, address, 'Active', '', now, now]);
+  }
+}
+
+function getClients_(sh) {
+  const lastRow = sh.getLastRow();
+  if (lastRow < 2) return [];
+  const vals = sh.getRange(2,1,lastRow-1,CLIENT_HEADERS.length).getValues();
+  return vals.filter(r => String(r[4]||'Active') !== 'Archived').map(r => ({id:r[0], client:r[1], ndisNo:r[2], address:r[3], status:r[4]}));
+}
+
+function formatDateForInput_(v) {
+  if (!v) return '';
+  if (Object.prototype.toString.call(v) === '[object Date]') {
+    return Utilities.formatDate(v, Session.getScriptTimeZone(), 'yyyy-MM-dd');
+  }
+  return String(v);
+}
+
+function jsonp(callback, data) {
+  const safe = String(callback || 'callback').replace(/[^\w.$]/g,'');
+  return ContentService.createTextOutput(safe + '(' + JSON.stringify(data) + ');')
+    .setMimeType(ContentService.MimeType.JAVASCRIPT);
+}
